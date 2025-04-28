@@ -8,5 +8,6 @@ namespace StakeHolderProject.Repositories.Interfaces
         IEnumerable<Visit> GetByStakeholderId(Guid stakeholderId);
         Visit? GetById(Guid id);
         Visit Add(Visit visit);
+        Visit Update(Visit visit);
     }
 } 

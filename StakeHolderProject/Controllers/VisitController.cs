@@ -95,6 +95,56 @@ namespace StakeHolderProject.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult UpdateVisit(Guid id, [FromBody] VisitDto visitDto)
+        {
+            try
+            {
+                var existingVisit = _visitService.GetVisitById(id);
+                if (existingVisit == null)
+                {
+                    return NotFound("Visit not found");
+                }
+
+                // Check if the stakeholder exists
+                var stakeholder = _stakeholderService.GetStakeholderById(visitDto.StakeholderId);
+                if (stakeholder == null)
+                {
+                    return NotFound("Stakeholder not found");
+                }
+
+                // Only the admin who created the stakeholder can update visits for that stakeholder
+                if (stakeholder.CreatedBy != _claimsService.Username)
+                {
+                    return Unauthorized("You can only update visits for stakeholders you created");
+                }
+
+                // Update the visit properties
+                existingVisit.StakeholderId = visitDto.StakeholderId;
+                existingVisit.VisitedPlace = visitDto.VisitedPlace;
+                existingVisit.VisitedTime = visitDto.VisitedTime;
+                existingVisit.VisitedDate = visitDto.VisitedDate;
+                existingVisit.Gift = visitDto.Gift;
+
+                // Save the updated visit
+                var updatedVisit = _visitService.UpdateVisit(existingVisit, _claimsService.Username);
+                return Ok(MapToResponseDto(updatedVisit));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         private VisitResponseDto MapToResponseDto(Visit visit)
         {
             return new VisitResponseDto

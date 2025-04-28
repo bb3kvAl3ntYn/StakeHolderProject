@@ -1,0 +1,47 @@
+<header>
+  <nav class="navbar">
+    <div class="container">
+      <a class="navbar-brand" [routerLink]="['/']">StakeHolder Management</a>
+      
+      <button 
+        class="navbar-toggler" 
+        type="button" 
+        (click)="toggle()"
+        [attr.aria-expanded]="isExpanded"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div 
+        class="navbar-collapse" 
+        [ngClass]="{ show: isExpanded }"
+      >
+        <ul class="navbar-nav">
+          <li class="nav-item" *ngIf="isLoggedIn()">
+            <a class="nav-link" [routerLink]="['/stakeholder']" routerLinkActive="active">
+              Stakeholders
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isLoggedIn()">
+            <a class="nav-link" [routerLink]="['/visit']" routerLinkActive="active">
+              Visits
+            </a>
+          </li>
+        </ul>
+        
+        <ul class="navbar-nav navbar-right">
+          <li class="nav-item" *ngIf="!isLoggedIn()">
+            <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">
+              Login
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isLoggedIn()">
+            <a class="nav-link logout" (click)="logout()">
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header> 

@@ -1,6 +1,7 @@
 using StakeHolderProject.Models;
 using StakeHolderProject.Repositories.Interfaces;
 using StakeHolderProject.Services.Interfaces;
+using System.Linq;
 
 namespace StakeHolderProject.Services
 {
@@ -17,7 +18,15 @@ namespace StakeHolderProject.Services
 
         public IEnumerable<Stakeholder> GetAllStakeholders()
         {
-            return _stakeholderRepository.GetAll();
+            var stakeholders = _stakeholderRepository.GetAll();
+            
+            // Sort stakeholders based on the specified criteria:
+            // 1. SeniorityLevel (higher level is newer)
+            // 2. Creation Year (later year is newer)
+            // 3. Lexical name comparison (alphabetically later is newer)
+            return stakeholders.OrderByDescending(s => s.SeniorityLevel)
+                             .ThenBy(s => s.CreatedDate.Year)
+                             .ThenBy(s => s.Name);
         }
 
         public Stakeholder? GetStakeholderById(Guid id)
@@ -50,8 +59,16 @@ namespace StakeHolderProject.Services
                 return false;
             }
 
-            var oldestDate = _stakeholderRepository.GetOldestStakeholderCreationDate();
-            if (oldestDate.HasValue && oldestDate.Value == existingStakeholder.CreatedDate)
+            // Get the oldest stakeholder based on our custom sorting criteria
+            var stakeholders = _stakeholderRepository.GetAll();
+            var oldestStakeholder = stakeholders
+                .OrderBy(s => s.SeniorityLevel)
+                .ThenBy(s => s.CreatedDate.Year)
+                .ThenBy(s => s.Name)
+                .FirstOrDefault();
+
+            // Prevent updating the oldest stakeholder
+            if (oldestStakeholder != null && oldestStakeholder.Id == existingStakeholder.Id)
             {
                 throw new InvalidOperationException("Cannot update the oldest stakeholder in the system");
             }
@@ -64,6 +81,26 @@ namespace StakeHolderProject.Services
             if (!_authService.IsAdmin(adminUsername))
             {
                 throw new UnauthorizedAccessException("Only admins can delete stakeholders");
+            }
+
+            var existingStakeholder = GetStakeholderById(id);
+            if (existingStakeholder == null)
+            {
+                return false;
+            }
+
+            // Get the oldest stakeholder based on our custom sorting criteria
+            var stakeholders = _stakeholderRepository.GetAll();
+            var oldestStakeholder = stakeholders
+                .OrderBy(s => s.SeniorityLevel)
+                .ThenBy(s => s.CreatedDate.Year)
+                .ThenBy(s => s.Name)
+                .FirstOrDefault();
+
+            // Prevent deleting the oldest stakeholder
+            if (oldestStakeholder != null && oldestStakeholder.Id == existingStakeholder.Id)
+            {
+                throw new InvalidOperationException("Cannot delete the oldest stakeholder in the system");
             }
 
             return _stakeholderRepository.Delete(id);

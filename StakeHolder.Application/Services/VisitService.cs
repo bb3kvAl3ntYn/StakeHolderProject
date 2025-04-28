@@ -58,5 +58,26 @@ namespace StakeHolderProject.Services
             visit.CreatedDate = DateTime.UtcNow;
             return _visitRepository.Add(visit);
         }
+
+        public Visit UpdateVisit(Visit visit, string adminUsername)
+        {
+            if (!_authService.IsAdmin(adminUsername))
+            {
+                throw new UnauthorizedAccessException("Only admins can update visits");
+            }
+
+            var stakeholder = _stakeholderRepository.GetById(visit.StakeholderId);
+            if (stakeholder == null)
+            {
+                throw new KeyNotFoundException("Stakeholder not found");
+            }
+
+            if (stakeholder.CreatedBy != adminUsername)
+            {
+                throw new UnauthorizedAccessException("Admins can only update visits for stakeholders they created");
+            }
+
+            return _visitRepository.Update(visit);
+        }
     }
 } 

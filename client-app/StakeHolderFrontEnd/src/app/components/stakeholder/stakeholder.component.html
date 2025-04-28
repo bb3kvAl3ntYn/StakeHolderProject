@@ -1,0 +1,81 @@
+<div class="container">
+  <h2>Stakeholders</h2>
+  
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading stakeholders...</p>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="!isLoading && !errorMessage">
+    <div class="action-bar">
+      <button class="btn btn-primary" (click)="addStakeholder()">
+        <i class="fa fa-plus"></i> Add New Stakeholder
+      </button>
+    </div>
+    
+    <div *ngIf="stakeholders.length === 0" class="no-data">
+      <p>No stakeholders found. Click the "Add New Stakeholder" button to create one.</p>
+    </div>
+    
+    <table *ngIf="stakeholders.length > 0" class="stakeholder-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Organization</th>
+          <th>Designation</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stakeholder of stakeholders">
+          <td>{{ stakeholder.name }}</td>
+          <td>{{ stakeholder.organization }}</td>
+          <td>{{ stakeholder.designation }}</td>
+          <td>{{ stakeholder.phone }}</td>
+          <td>{{ stakeholder.status || 'Active' }}</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-info" (click)="viewStakeholder(stakeholder.id!)">
+              <i class="fa fa-eye"></i> View
+            </button>
+            <button class="btn btn-sm btn-warning" (click)="editStakeholder(stakeholder.id!)">
+              <i class="fa fa-edit"></i> Edit
+            </button>
+            <button *ngIf="isAdmin()" class="btn btn-sm btn-danger" (click)="confirmDelete(stakeholder)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" *ngIf="showDeleteModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="close-button" (click)="cancelDelete()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete stakeholder: <strong>{{ stakeholderToDelete?.name }}</strong>?</p>
+      <p class="text-danger">This action cannot be undone.</p>
+      
+      <div *ngIf="deleteMessage" class="alert alert-danger">
+        {{ deleteMessage }}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="deleteStakeholder()" [disabled]="isLoading">
+        <span *ngIf="isLoading">Deleting...</span>
+        <span *ngIf="!isLoading">Delete</span>
+      </button>
+    </div>
+  </div>
+</div> 

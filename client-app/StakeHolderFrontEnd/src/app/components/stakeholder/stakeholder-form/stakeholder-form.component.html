@@ -1,0 +1,192 @@
+<div class="form-container">
+  <h2>{{ pageTitle }}</h2>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="isLoadingStakeholder" class="loading">
+    <p>Loading stakeholder data...</p>
+  </div>
+  
+  <form [formGroup]="stakeholderForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="text" 
+        id="name" 
+        formControlName="name" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('name')?.invalid && stakeholderForm.get('name')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ stakeholderForm.get('name')?.value }}
+      </div>
+      <div *ngIf="stakeholderForm.get('name')?.invalid && stakeholderForm.get('name')?.touched" class="invalid-feedback">
+        Name is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="dateOfBirth">Date of Birth</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="date" 
+        id="dateOfBirth" 
+        formControlName="dateOfBirth" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('dateOfBirth')?.invalid && stakeholderForm.get('dateOfBirth')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ formatDate(stakeholderForm.get('dateOfBirth')?.value) }}
+      </div>
+      <div *ngIf="stakeholderForm.get('dateOfBirth')?.invalid && stakeholderForm.get('dateOfBirth')?.touched" class="invalid-feedback">
+        Date of Birth is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="text" 
+        id="phone" 
+        formControlName="phone" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('phone')?.invalid && stakeholderForm.get('phone')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ stakeholderForm.get('phone')?.value }}
+      </div>
+      <div *ngIf="stakeholderForm.get('phone')?.invalid && stakeholderForm.get('phone')?.touched" class="invalid-feedback">
+        Phone is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="designation">Designation</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="text" 
+        id="designation" 
+        formControlName="designation" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('designation')?.invalid && stakeholderForm.get('designation')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ stakeholderForm.get('designation')?.value }}
+      </div>
+      <div *ngIf="stakeholderForm.get('designation')?.invalid && stakeholderForm.get('designation')?.touched" class="invalid-feedback">
+        Designation is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="organization">Organization</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="text" 
+        id="organization" 
+        formControlName="organization" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('organization')?.invalid && stakeholderForm.get('organization')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ stakeholderForm.get('organization')?.value }}
+      </div>
+      <div *ngIf="stakeholderForm.get('organization')?.invalid && stakeholderForm.get('organization')?.touched" class="invalid-feedback">
+        Organization is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="organizationType">Organization Type</label>
+      <select 
+        *ngIf="!isViewOnly"
+        id="organizationType" 
+        formControlName="organizationType" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('organizationType')?.invalid && stakeholderForm.get('organizationType')?.touched"
+      >
+        <option [ngValue]="null">Select Organization Type</option>
+        <option *ngFor="let type of organizationTypes" [ngValue]="type.id">{{ type.name }}</option>
+      </select>
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ getEnumName(organizationTypes, stakeholderForm.get('organizationType')?.value) }}
+      </div>
+      <div *ngIf="stakeholderForm.get('organizationType')?.invalid && stakeholderForm.get('organizationType')?.touched" class="invalid-feedback">
+        Organization Type is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="joiningDate">Joining Date</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="date" 
+        id="joiningDate" 
+        formControlName="joiningDate" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('joiningDate')?.invalid && stakeholderForm.get('joiningDate')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ formatDate(stakeholderForm.get('joiningDate')?.value) }}
+      </div>
+      <div *ngIf="stakeholderForm.get('joiningDate')?.invalid && stakeholderForm.get('joiningDate')?.touched" class="invalid-feedback">
+        Joining Date is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="seniorityLevel">Seniority Level</label>
+      <select 
+        *ngIf="!isViewOnly"
+        id="seniorityLevel" 
+        formControlName="seniorityLevel" 
+        class="form-control" 
+        [class.is-invalid]="stakeholderForm.get('seniorityLevel')?.invalid && stakeholderForm.get('seniorityLevel')?.touched"
+      >
+        <option [ngValue]="null">Select Seniority Level</option>
+        <option *ngFor="let level of seniorityLevels" [ngValue]="level.id">{{ level.name }}</option>
+      </select>
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ getEnumName(seniorityLevels, stakeholderForm.get('seniorityLevel')?.value) }}
+      </div>
+      <div *ngIf="stakeholderForm.get('seniorityLevel')?.invalid && stakeholderForm.get('seniorityLevel')?.touched" class="invalid-feedback">
+        Seniority Level is required
+      </div>
+    </div>
+    
+    <div *ngIf="isViewOnly && stakeholderForm.get('createdBy')?.value" class="form-group">
+      <label>Created By</label>
+      <div class="form-control-readonly">
+        {{ stakeholderForm.get('createdBy')?.value }}
+      </div>
+    </div>
+    
+    <div *ngIf="isViewOnly && stakeholderForm.get('createdDate')?.value" class="form-group">
+      <label>Created Date</label>
+      <div class="form-control-readonly">
+        {{ stakeholderForm.get('createdDate')?.value }}
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        <i class="fa fa-arrow-left"></i> Back
+      </button>
+      <button *ngIf="isViewOnly && !isEditing" type="button" class="btn btn-warning" (click)="editStakeholder()">
+        <i class="fa fa-edit"></i> Edit
+      </button>
+      <button *ngIf="!isViewOnly" type="submit" class="btn btn-primary" [disabled]="stakeholderForm.invalid || isSubmitting || isViewOnly">
+        <span *ngIf="isSubmitting"><i class="fa fa-spinner fa-spin"></i> Saving...</span>
+        <span *ngIf="!isSubmitting">
+          <i *ngIf="!isEditing" class="fa fa-save"></i>
+          <i *ngIf="isEditing" class="fa fa-check"></i>
+          {{ isEditing ? 'Update' : 'Save' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div> 

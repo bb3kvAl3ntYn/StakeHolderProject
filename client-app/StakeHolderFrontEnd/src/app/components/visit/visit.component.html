@@ -1,0 +1,81 @@
+<div class="container">
+  <h2>Stakeholder Visits</h2>
+  
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading visits...</p>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="!isLoading && !errorMessage">
+    <div class="action-bar">
+      <button class="btn btn-primary" (click)="addVisit()">
+        <i class="fa fa-plus"></i> Add New Visit
+      </button>
+    </div>
+    
+    <div *ngIf="visits.length === 0" class="no-data">
+      <p>No visits found. Click the "Add New Visit" button to create one.</p>
+    </div>
+    
+    <table *ngIf="visits.length > 0" class="visit-table">
+      <thead>
+        <tr>
+          <th>Place</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Gift</th>
+          <th>Created By</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let visit of visits">
+          <td>{{ visit.visitedPlace }}</td>
+          <td>{{ visit.visitedDate | date:'mediumDate' }}</td>
+          <td>{{ visit.visitedTime }}</td>
+          <td>{{ visit.gift || 'None' }}</td>
+          <td>{{ visit.createdBy }}</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-info" (click)="viewVisit(visit.id!)">
+              <i class="fa fa-eye"></i> View
+            </button>
+            <button class="btn btn-sm btn-warning" (click)="editVisit(visit.id!)">
+              <i class="fa fa-edit"></i> Edit
+            </button>
+            <button *ngIf="isAdmin()" class="btn btn-sm btn-danger" (click)="confirmDelete(visit)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" *ngIf="showDeleteModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="close-button" (click)="cancelDelete()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete visit to <strong>{{ visitToDelete?.visitedPlace }}</strong>?</p>
+      <p class="text-danger">This action cannot be undone.</p>
+      
+      <div *ngIf="deleteMessage" class="alert alert-danger">
+        {{ deleteMessage }}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="deleteVisit()" [disabled]="isLoading">
+        <span *ngIf="isLoading">Deleting...</span>
+        <span *ngIf="!isLoading">Delete</span>
+      </button>
+    </div>
+  </div>
+</div> 

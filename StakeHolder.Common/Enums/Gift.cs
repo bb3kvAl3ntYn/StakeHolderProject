@@ -2,8 +2,8 @@ namespace StakeholderCommon.Enums
 {
     public enum Gift
     {
-        Car,
-        Laptop,
-        Special
+        Car = 1,
+        Laptop = 2,
+        Special = 3
     }
 } 

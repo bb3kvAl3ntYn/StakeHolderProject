@@ -83,9 +83,25 @@ namespace StakeHolderProject
                 options.AddDefaultPolicy(
                     policy =>
                     {
-                        policy.AllowAnyOrigin()
+                        policy.SetIsOriginAllowed(_ => true)
                               .AllowAnyHeader()
-                              .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .AllowCredentials()
+                              .WithExposedHeaders("Content-Disposition", "X-Pagination");
+                    });
+                
+                options.AddPolicy("AllowSpecificOrigins",
+                    policy =>
+                    {
+                        policy.WithOrigins(
+                                "http://localhost:4200",
+                                "http://localhost:5000",
+                                "https://localhost:5001",
+                                "http://localhost:5173"
+                            )
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     });
             });
 

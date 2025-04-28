@@ -2,8 +2,8 @@ namespace StakeholderCommon.Enums
 {
     public enum OrganizationType
     {
-        Government,
-        Private,
-        NGO
+        Government = 1,
+        Private = 2,
+        NGO = 3
     }
 } 

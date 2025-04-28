@@ -1,0 +1,32 @@
+<div class="home-container">
+  <div class="welcome-section">
+    <h1>StakeHolder Management System</h1>
+    
+    <div *ngIf="!isLoggedIn()" class="not-logged-in">
+      <p>Please log in to manage stakeholders and visits.</p>
+      <a [routerLink]="['/login']" class="login-button">Sign In</a>
+    </div>
+    
+    <div *ngIf="isLoggedIn()" class="logged-in">
+      <p>Welcome, <strong>{{ getUserName() }}</strong>!</p>
+      <p>You are logged in as: <span class="user-role">{{ isAdmin() ? 'Administrator' : 'User' }}</span></p>
+      
+      <div class="quick-access">
+        <h3>Quick Access</h3>
+        <div class="card-container">
+          <div class="card" [routerLink]="['/stakeholder']">
+            <div class="card-icon">👥</div>
+            <div class="card-title">Stakeholders</div>
+            <div class="card-description">Manage stakeholder information</div>
+          </div>
+          
+          <div class="card" [routerLink]="['/visit']">
+            <div class="card-icon">🗓️</div>
+            <div class="card-title">Visits</div>
+            <div class="card-description">Track stakeholder visits</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

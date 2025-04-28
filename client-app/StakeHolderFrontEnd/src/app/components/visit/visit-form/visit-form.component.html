@@ -1,0 +1,135 @@
+<div class="form-container">
+  <h2>{{ pageTitle }}</h2>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="isLoadingVisit || isLoadingStakeholders" class="loading">
+    <p>Loading data...</p>
+  </div>
+  
+  <form [formGroup]="visitForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="stakeholderId">Stakeholder</label>
+      <select 
+        *ngIf="!isViewOnly"
+        id="stakeholderId" 
+        formControlName="stakeholderId" 
+        class="form-control"
+        [class.is-invalid]="visitForm.get('stakeholderId')?.invalid && visitForm.get('stakeholderId')?.touched"
+        [disabled]="isLoadingStakeholders || isViewOnly"
+      >
+        <option value="">Select Stakeholder</option>
+        <option *ngFor="let stakeholder of stakeholders" [value]="stakeholder.id">{{ stakeholder.name }}</option>
+      </select>
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ getStakeholderName(visitForm.get('stakeholderId')?.value) }}
+      </div>
+      <div *ngIf="visitForm.get('stakeholderId')?.invalid && visitForm.get('stakeholderId')?.touched" class="invalid-feedback">
+        Stakeholder is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="visitedPlace">Visited Place</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="text" 
+        id="visitedPlace" 
+        formControlName="visitedPlace" 
+        class="form-control" 
+        [class.is-invalid]="visitForm.get('visitedPlace')?.invalid && visitForm.get('visitedPlace')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ visitForm.get('visitedPlace')?.value }}
+      </div>
+      <div *ngIf="visitForm.get('visitedPlace')?.invalid && visitForm.get('visitedPlace')?.touched" class="invalid-feedback">
+        Visited Place is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="visitedDate">Visited Date</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="date" 
+        id="visitedDate" 
+        formControlName="visitedDate" 
+        class="form-control" 
+        [class.is-invalid]="visitForm.get('visitedDate')?.invalid && visitForm.get('visitedDate')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ visitForm.get('visitedDate')?.value | date:'mediumDate' }}
+      </div>
+      <div *ngIf="visitForm.get('visitedDate')?.invalid && visitForm.get('visitedDate')?.touched" class="invalid-feedback">
+        Visited Date is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="visitedTime">Visited Time</label>
+      <input 
+        *ngIf="!isViewOnly"
+        type="time" 
+        id="visitedTime" 
+        formControlName="visitedTime" 
+        class="form-control" 
+        [class.is-invalid]="visitForm.get('visitedTime')?.invalid && visitForm.get('visitedTime')?.touched"
+      >
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ visitForm.get('visitedTime')?.value }}
+      </div>
+      <div *ngIf="visitForm.get('visitedTime')?.invalid && visitForm.get('visitedTime')?.touched" class="invalid-feedback">
+        Visited Time is required
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="gift">Gift</label>
+      <select 
+        *ngIf="!isViewOnly"
+        id="gift" 
+        formControlName="gift" 
+        class="form-control"
+      >
+        <option [ngValue]="null">No Gift</option>
+        <option *ngFor="let giftOption of gifts" [ngValue]="giftOption.id">{{ giftOption.name }}</option>
+      </select>
+      <div *ngIf="isViewOnly" class="form-control-readonly">
+        {{ getGiftName(visitForm.get('gift')?.value) || 'None' }}
+      </div>
+    </div>
+    
+    <div *ngIf="isViewOnly && visitForm.get('createdBy')?.value" class="form-group">
+      <label>Created By</label>
+      <div class="form-control-readonly">
+        {{ visitForm.get('createdBy')?.value }}
+      </div>
+    </div>
+    
+    <div *ngIf="isViewOnly && visitForm.get('createdDate')?.value" class="form-group">
+      <label>Created Date</label>
+      <div class="form-control-readonly">
+        {{ visitForm.get('createdDate')?.value }}
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        <i class="fa fa-arrow-left"></i> Back
+      </button>
+      <button *ngIf="isViewOnly && !isEditing" type="button" class="btn btn-warning" [routerLink]="['/visit/edit', visitId]">
+        <i class="fa fa-edit"></i> Edit
+      </button>
+      <button *ngIf="!isViewOnly" type="submit" class="btn btn-primary" [disabled]="visitForm.invalid || isSubmitting || isViewOnly">
+        <span *ngIf="isSubmitting"><i class="fa fa-spinner fa-spin"></i> Saving...</span>
+        <span *ngIf="!isSubmitting">
+          <i *ngIf="!isEditing" class="fa fa-save"></i>
+          <i *ngIf="isEditing" class="fa fa-check"></i>
+          {{ isEditing ? 'Update' : 'Save' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
